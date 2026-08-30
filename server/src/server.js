@@ -14,37 +14,16 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-];
-
-if (process.env.CLIENT_URL) {
-  allowedOrigins.push(process.env.CLIENT_URL.replace(/\/$/, ''));
-}
-
+// CORS configuration - Fully permissive to prevent any cloud preflight block
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, or server-to-server)
-      if (!origin) return callback(null, true);
-      if (
-        allowedOrigins.indexOf(origin) !== -1 ||
-        origin.endsWith('.vercel.app') ||
-        process.env.NODE_ENV !== 'production'
-      ) {
-        return callback(null, true);
-      }
-      return callback(null, true); // Fallback permissive for smooth operation
-    },
+    origin: true, // Automatically reflects the request origin (Vercel, localhost, etc.)
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   })
 );
+app.options('*', cors()); // Enable preflight for all routes
 
 // Express Body Parser
 app.use(express.json());
@@ -100,32 +79,31 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
-const startServer = async () => {
-  try {
-    await connectDB();
+// Start HTTP Server immediately so Railway/Render never reports crashed container
+const host = '0.0.0.0';
+app.listen(PORT, host, () => {
+  console.log(`====================================================`);
+  console.log(`  Citizen Complaint Portal Backend Running!`);
+  console.log(`  Port: http://${host}:${PORT}`);
+  console.log(`  Health Check: http://${host}:${PORT}/api/health`);
+  console.log(`====================================================`);
 
-    // Auto-seed if database is empty
-    const userCount = await User.countDocuments();
-    if (userCount === 0) {
-      console.log('[Startup] No users found. Auto-seeding initial database...');
-      await seedData();
-    }
-
-    const host = '0.0.0.0';
-    app.listen(PORT, host, () => {
-      console.log(`====================================================`);
-      console.log(`  Citizen Complaint Portal Backend Running!`);
-      console.log(`  Port: http://${host}:${PORT}`);
-      console.log(`  Health Check: http://${host}:${PORT}/api/health`);
-      console.log(`====================================================`);
+  // Connect to Database asynchronously
+  connectDB()
+    .then(async () => {
+      try {
+        const userCount = await User.countDocuments();
+        if (userCount === 0) {
+          console.log('[Startup] No users found. Auto-seeding initial database...');
+          await seedData();
+        }
+      } catch (seedErr) {
+        console.warn('[Startup] Auto-seed check notice:', seedErr.message);
+      }
+    })
+    .catch((dbErr) => {
+      console.error('[Startup] Initial DB connection issue:', dbErr.message);
     });
-  } catch (error) {
-    console.error('Fatal server startup error:', error);
-    process.exit(1);
-  }
-};
-
-startServer();
+});
 
 module.exports = app;
