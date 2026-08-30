@@ -1,4 +1,24 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Normalize API Base URL to handle missing https:// or missing /api suffix gracefully
+const getNormalizedApiBase = () => {
+  let raw = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').trim();
+  
+  // If no protocol specified (e.g. "citizen-complaint-portal-production.up.railway.app")
+  if (!raw.startsWith('http://') && !raw.startsWith('https://')) {
+    raw = `https://${raw}`;
+  }
+  
+  // Remove trailing slashes
+  raw = raw.replace(/\/+$/, '');
+  
+  // Ensure /api suffix
+  if (!raw.endsWith('/api')) {
+    raw = `${raw}/api`;
+  }
+  
+  return raw;
+};
+
+const API_BASE = getNormalizedApiBase();
 
 /**
  * Universal fetch wrapper with authorization header injection
