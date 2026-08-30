@@ -14,16 +14,48 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration - Fully permissive to prevent any cloud preflight block
-app.use(
-  cors({
-    origin: true, // Automatically reflects the request origin (Vercel, localhost, etc.)
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  })
-);
-app.options('*', cors()); // Enable preflight for all routes
+// Configured allowed origins (Production Vercel domain, FRONTEND_URL env, and local dev)
+const allowedOrigins = [
+  'https://citizen-complaint-portal-ten.vercel.app',
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5000',
+].filter(Boolean);
+
+const isOriginAllowed = (origin) => {
+  if (!origin) return true; // Server-to-server, curl, Postman, health checks
+  if (allowedOrigins.includes(origin)) return true;
+  if (/^https:\/\/citizen-complaint-portal.*\.vercel\.app$/.test(origin)) return true;
+  return false;
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isOriginAllowed(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Origin',
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+  ],
+  exposedHeaders: ['Content-Disposition', 'Content-Type'],
+  optionsSuccessStatus: 204,
+  credentials: false, // JWT in Authorization header, no cookie credentials
+};
+
+// Register CORS middleware first before all routes
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Express Body Parser
 app.use(express.json());
