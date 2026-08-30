@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -7,17 +7,9 @@ import PriorityBadge from '../components/PriorityBadge';
 import StarRating from '../components/StarRating';
 import FeedbackModal from '../components/FeedbackModal';
 import {
-  ArrowLeft,
-  ThumbsUp,
-  MapPin,
-  Calendar,
-  User,
-  Shield,
-  Clock,
-  Sparkles,
-  MessageSquareQuote,
-  AlertCircle,
-  TrendingUp,
+  ArrowLeft, ThumbsUp, MapPin, Calendar, User, Shield, Clock,
+  Sparkles, MessageSquareQuote, AlertCircle, TrendingUp, CheckCircle,
+  FileText, Star,
 } from 'lucide-react';
 
 export const ComplaintDetailPage = () => {
@@ -94,9 +86,9 @@ export const ComplaintDetailPage = () => {
   const isOwner = user && complaint.createdBy && (complaint.createdBy._id === user.id || complaint.createdBy._id === user._id || complaint.createdBy === user.id);
 
   return (
-    <div className="main-content" style={{ maxWidth: '900px' }}>
+    <div className="main-content" style={{ maxWidth: '920px' }}>
       {/* Navigation header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -108,12 +100,12 @@ export const ComplaintDetailPage = () => {
 
         {isOfficer && (
           <Link to={`/officer/complaints/${complaint._id}`} className="btn btn-primary btn-sm">
-            <Shield size={15} /> Officer Review Screen &rarr;
+            <Shield size={15} /> Officer Review & Action Screen &rarr;
           </Link>
         )}
       </div>
 
-      <div className="card" style={{ padding: '2rem 2.25rem', marginBottom: '2rem' }}>
+      <div className="card" style={{ padding: '2.25rem', marginBottom: '2rem', borderRadius: 'var(--radius-2xl)' }}>
         {/* Category, Status & Priority Bar */}
         <div
           style={{
@@ -122,11 +114,11 @@ export const ComplaintDetailPage = () => {
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: '0.75rem',
-            marginBottom: '1rem',
+            marginBottom: '1.25rem',
           }}
         >
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <span className="badge badge-category" style={{ fontSize: '0.85rem', padding: '0.35rem 0.75rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span className="badge badge-category" style={{ fontSize: '0.85rem', padding: '0.35rem 0.8rem' }}>
               {complaint.category}
             </span>
             <StatusBadge status={complaint.status} />
@@ -136,34 +128,34 @@ export const ComplaintDetailPage = () => {
         </div>
 
         {/* Title */}
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1rem', lineHeight: 1.25 }}>
+        <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1.25rem', lineHeight: 1.25, letterSpacing: '-0.02em' }}>
           {complaint.title}
         </h1>
 
         {/* Priority Formula Breakdown Box */}
         <div
           style={{
-            backgroundColor: '#f8fafc',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)',
-            padding: '0.875rem 1.25rem',
-            marginBottom: '1.5rem',
+            background: 'var(--primary-50)',
+            border: '1px solid var(--primary-100)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '1rem 1.25rem',
+            marginBottom: '1.75rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '0.75rem',
-            fontSize: '0.85rem',
+            fontSize: '0.875rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-900)' }}>
             <TrendingUp size={18} color="var(--primary)" />
             <span>
               <strong>Algorithmic Priority Score:</strong> {complaint.priorityScore} (Tier: <strong>{complaint.priority}</strong>)
             </span>
           </div>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-            Score Formula: ({complaint.upvotes || 0} upvotes &times; 2) + ({complaint.daysSinceCreated ?? 0} days active)
+          <div style={{ color: 'var(--primary-700)', fontSize: '0.8rem', fontWeight: 500 }}>
+            Formula: ({complaint.upvotes || 0} upvotes &times; 2) + ({complaint.daysSinceCreated ?? 0} days active)
           </div>
         </div>
 
@@ -173,10 +165,10 @@ export const ComplaintDetailPage = () => {
             display: 'flex',
             flexWrap: 'wrap',
             gap: '1.5rem',
-            padding: '0.875rem 0',
+            padding: '1rem 0',
             borderTop: '1px solid var(--border)',
             borderBottom: '1px solid var(--border)',
-            marginBottom: '1.5rem',
+            marginBottom: '1.75rem',
             fontSize: '0.875rem',
             color: 'var(--text-muted)',
           }}
@@ -197,10 +189,10 @@ export const ComplaintDetailPage = () => {
 
         {/* Description */}
         <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+          <h3 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.6rem' }}>
             Issue Description
           </h3>
-          <p style={{ fontSize: '1rem', color: 'var(--text-main)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+          <p style={{ fontSize: '1.02rem', color: 'var(--text-main)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
             {complaint.description}
           </p>
         </div>
@@ -208,9 +200,10 @@ export const ComplaintDetailPage = () => {
         {/* Upvote Banner */}
         <div
           style={{
-            backgroundColor: '#f1f5f9',
-            borderRadius: 'var(--radius-md)',
-            padding: '1rem 1.25rem',
+            background: '#f8fafc',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-xl)',
+            padding: '1.25rem 1.5rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -220,10 +213,10 @@ export const ComplaintDetailPage = () => {
           }}
         >
           <div>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main)' }}>
+            <div style={{ fontWeight: 700, fontSize: '0.97rem', color: 'var(--text-main)' }}>
               Community Endorsements ({complaint.upvotes || 0} Upvotes)
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
               Upvotes raise municipal visibility and escalate the automated priority score.
             </div>
           </div>
@@ -246,14 +239,14 @@ export const ComplaintDetailPage = () => {
               backgroundColor: '#eff6ff',
               border: '1px solid #bfdbfe',
               borderLeft: '4px solid var(--primary)',
-              borderRadius: 'var(--radius-md)',
-              padding: '1.25rem',
+              borderRadius: 'var(--radius-lg)',
+              padding: '1.25rem 1.5rem',
               marginBottom: '1.75rem',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
               <Shield size={18} color="var(--primary)" />
-              <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)' }}>
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--primary)' }}>
                 Official Municipal Officer Remark
               </h3>
             </div>
@@ -269,8 +262,8 @@ export const ComplaintDetailPage = () => {
             style={{
               backgroundColor: '#f0fdf4',
               border: '1px solid #bbf7d0',
-              borderRadius: 'var(--radius-md)',
-              padding: '1.25rem',
+              borderRadius: 'var(--radius-lg)',
+              padding: '1.5rem',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>

@@ -1,6 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, ThumbsUp, ArrowRight, ExternalLink } from 'lucide-react';
+import { AlertTriangle, ThumbsUp, ArrowRight, ExternalLink, ShieldAlert } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 import PriorityBadge from './PriorityBadge';
 
@@ -17,33 +17,35 @@ export const DuplicateWarningModal = ({
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '650px' }}>
+      <div className="modal-content" style={{ maxWidth: '640px', borderRadius: 'var(--radius-2xl)', padding: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
           <div
             style={{
+              width: 44,
+              height: 44,
+              borderRadius: '12px',
               backgroundColor: '#fef3c7',
               color: '#b45309',
-              padding: '0.5rem',
-              borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              flexShrink: 0,
             }}
           >
-            <AlertTriangle size={24} />
+            <ShieldAlert size={24} />
           </div>
           <div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)' }}>
-              Similar Complaint Already Reported
+              Active Reports in this Locality
             </h3>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-              We found {duplicates.length} active complaint(s) in this area and category.
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              We found {duplicates.length} open complaint(s) in this area & category.
             </p>
           </div>
         </div>
 
-        <div className="alert alert-warning" style={{ fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-          Upvoting an existing report increases its urgency score and helps municipal teams resolve it faster, avoiding duplicate work.
+        <div className="alert alert-warning" style={{ fontSize: '0.875rem', marginBottom: '1.25rem' }}>
+          <strong>Tip:</strong> Upvoting existing reports escalates their priority tier and helps teams respond faster without duplicating effort.
         </div>
 
         {/* Existing Duplicates List */}
@@ -53,8 +55,8 @@ export const DuplicateWarningModal = ({
               key={item._id}
               style={{
                 border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-md)',
-                padding: '0.875rem',
+                borderRadius: 'var(--radius-lg)',
+                padding: '1rem',
                 backgroundColor: 'var(--bg-main)',
               }}
             >
@@ -62,17 +64,17 @@ export const DuplicateWarningModal = ({
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--primary)' }}>
                   {item.title}
                 </h4>
-                <div style={{ display: 'flex', gap: '0.35rem' }}>
+                <div style={{ display: 'flex', gap: '0.35rem', flexShrink: 0 }}>
                   <StatusBadge status={item.status} />
                   <PriorityBadge priority={item.priority} score={item.priorityScore} />
                 </div>
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.65rem' }}>
                 {item.description.length > 110 ? `${item.description.slice(0, 110)}...` : item.description}
               </p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', borderTop: '1px solid var(--border)', paddingTop: '0.5rem' }}>
                 <span style={{ color: 'var(--text-muted)' }}>
-                  Area: <strong>{item.area}</strong> &bull; Upvotes: <strong>{item.upvotes}</strong>
+                  📍 Area: <strong>{item.area}</strong> &bull; 👍 Upvotes: <strong>{item.upvotes || 0}</strong>
                 </span>
                 <button
                   type="button"
@@ -81,7 +83,7 @@ export const DuplicateWarningModal = ({
                     navigate(`/complaints/${item._id}`);
                   }}
                   className="btn btn-secondary btn-sm"
-                  style={{ gap: '0.25rem', padding: '0.25rem 0.5rem' }}
+                  style={{ gap: '0.3rem', padding: '0.25rem 0.6rem' }}
                 >
                   <ThumbsUp size={13} color="var(--primary)" />
                   View & Upvote
@@ -111,17 +113,15 @@ export const DuplicateWarningModal = ({
           >
             Go Back & Edit
           </button>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onContinueAnyway}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Continue Anyway & Submit'}
-              <ArrowRight size={16} />
-            </button>
-          </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={onContinueAnyway}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit New Report Anyway'}
+            <ArrowRight size={16} />
+          </button>
         </div>
       </div>
     </div>

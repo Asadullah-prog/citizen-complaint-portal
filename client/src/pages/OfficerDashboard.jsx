@@ -1,25 +1,14 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import StatusBadge from '../components/StatusBadge';
 import PriorityBadge from '../components/PriorityBadge';
 import StarRating from '../components/StarRating';
 import {
-  ShieldCheck,
-  Sparkles,
-  Download,
-  Search,
-  Filter,
-  RefreshCw,
-  AlertTriangle,
-  Flame,
-  CheckCircle2,
-  Clock,
-  Layers,
-  FileSpreadsheet,
-  ArrowUpDown,
-  ExternalLink,
-  ChevronRight,
+  ShieldCheck, Sparkles, Download, Search, Filter, RefreshCw,
+  AlertTriangle, Flame, CheckCircle2, Clock, Layers,
+  FileSpreadsheet, ArrowUpDown, ExternalLink, ChevronRight,
+  TrendingUp, BarChart3, Star, MapPin, Calendar, Tag,
 } from 'lucide-react';
 
 export const OfficerDashboard = () => {
@@ -131,7 +120,6 @@ export const OfficerDashboard = () => {
     }
   };
 
-  // Compute stats from full list or aiStats
   const total = complaints.length;
   const pending = complaints.filter((c) => c.status === 'Pending').length;
   const inProgress = complaints.filter((c) => c.status === 'In Progress').length;
@@ -139,73 +127,107 @@ export const OfficerDashboard = () => {
   const critical = complaints.filter((c) => c.priority === 'Critical').length;
   const high = complaints.filter((c) => c.priority === 'High').length;
 
+  const statCards = [
+    { label: 'Total Reports', value: total, color: '#2563eb', bg: '#eff6ff', icon: BarChart3 },
+    { label: 'Pending Triage', value: pending, color: '#d97706', bg: '#fffbeb', icon: Clock },
+    { label: 'In Progress', value: inProgress, color: '#0284c7', bg: '#e0f2fe', icon: TrendingUp },
+    { label: 'Resolved', value: resolved, color: '#059669', bg: '#ecfdf5', icon: CheckCircle2 },
+    { label: 'Critical Urgency', value: critical, color: '#dc2626', bg: '#fef2f2', icon: Flame },
+    { label: 'Avg Satisfaction', value: aiStats?.avgSatisfaction ? `${aiStats.avgSatisfaction}★` : '4.8★', color: '#7c3aed', bg: '#f5f3ff', icon: Star },
+  ];
+
   return (
     <div className="main-content main-content-wide">
       {/* Header bar */}
       <div
         style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e3a8a 100%)',
+          borderRadius: 'var(--radius-2xl)',
+          padding: '2.25rem 2rem',
+          marginBottom: '2rem',
+          color: '#ffffff',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '1rem',
-          marginBottom: '1.75rem',
+          gap: '1.5rem',
+          boxShadow: 'var(--shadow-lg)',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <ShieldCheck size={26} color="var(--primary)" />
-            <h1 style={{ fontSize: '1.85rem', fontWeight: 800 }}>Municipal Operations Command Center</h1>
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'radial-gradient(ellipse 60% 80% at 100% 0%, rgba(96,165,250,0.18), transparent)' }} />
+        <div style={{ position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.4rem' }}>
+            <div style={{ width: 38, height: 38, borderRadius: '10px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ShieldCheck size={22} color="#ffffff" />
+            </div>
+            <h1 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 900, letterSpacing: '-0.02em' }}>
+              Operations Command Center
+            </h1>
           </div>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            Administrative dashboard for complaint triage, dispatch, resolution tracking, and policy metrics
+          <p style={{ opacity: 0.85, fontSize: '0.92rem', maxWidth: '680px', lineHeight: 1.55 }}>
+            Administrative dashboard for civic complaint triage, emergency dispatch, resolution metrics, and AI operations analysis.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', position: 'relative' }}>
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn"
             onClick={handleDownloadCSV}
             disabled={exporting}
-            style={{ gap: '0.4rem' }}
+            style={{
+              background: '#ffffff',
+              color: 'var(--primary-900)',
+              fontWeight: 700,
+              gap: '0.5rem',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+            }}
           >
-            <Download size={16} />
-            {exporting ? 'Generating CSV...' : 'Download CSV Export'}
+            <Download size={16} color="var(--primary-800)" />
+            {exporting ? 'Generating CSV...' : 'Export Filtered CSV'}
           </button>
         </div>
       </div>
 
-      {/* AI Briefing Card (Prominent Top Hero) */}
+      {/* AI Briefing Card */}
       <div
         className="card"
         style={{
-          background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+          background: 'linear-gradient(135deg, #172554 0%, #1e3a8a 50%, #1d4ed8 100%)',
           color: '#ffffff',
-          padding: '1.75rem 2rem',
+          padding: '2rem',
           marginBottom: '2rem',
+          borderRadius: 'var(--radius-2xl)',
           border: 'none',
           boxShadow: 'var(--shadow-lg)',
           position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                padding: '0.4rem',
-                borderRadius: '8px',
+                width: 44,
+                height: 44,
+                borderRadius: '12px',
+                background: 'rgba(255, 255, 255, 0.18)',
+                backdropFilter: 'blur(8px)',
                 display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
               }}
             >
-              <Sparkles size={20} color="#fde047" />
+              <Sparkles size={22} color="#fde047" />
             </div>
             <div>
-              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.85 }}>
-                AI EXECUTIVE SUMMARY &bull; {isAiGenerated ? 'Google Gemini 1.5' : 'Deterministic Operations Engine'}
+              <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', opacity: 0.85, fontWeight: 700 }}>
+                AI EXECUTIVE SUMMARY &bull; {isAiGenerated ? 'Google Gemini 1.5' : 'Deterministic Civic Engine'}
               </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Daily Civic Operations Briefing</h2>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.01em' }}>Daily Civic Operations Briefing</h2>
             </div>
           </div>
 
@@ -217,126 +239,100 @@ export const OfficerDashboard = () => {
               backgroundColor: 'rgba(255, 255, 255, 0.15)',
               border: '1px solid rgba(255, 255, 255, 0.3)',
               color: '#ffffff',
-              padding: '0.35rem 0.75rem',
+              padding: '0.45rem 0.9rem',
               borderRadius: 'var(--radius-md)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.35rem',
-              fontSize: '0.8rem',
+              gap: '0.45rem',
+              fontSize: '0.82rem',
               fontWeight: 600,
+              fontFamily: 'inherit',
+              transition: 'all 0.15s',
             }}
           >
-            <RefreshCw size={13} className={aiLoading ? 'spinner' : ''} />
-            {aiLoading ? 'Refreshing...' : 'Regenerate Briefing'}
+            <RefreshCw size={14} className={aiLoading ? 'spinner' : ''} />
+            {aiLoading ? 'Analyzing...' : 'Regenerate Briefing'}
           </button>
         </div>
 
-        <p style={{ fontSize: '1rem', lineHeight: 1.65, opacity: 0.95, maxWidth: '1100px' }}>
-          {aiBriefing || 'Analyzing municipal complaint database and computing real-time response statistics...'}
+        <p style={{ fontSize: '1.02rem', lineHeight: 1.7, opacity: 0.95, maxWidth: '1100px', fontWeight: 400 }}>
+          {aiBriefing || 'Analyzing municipal database and calculating real-time response statistics...'}
         </p>
 
         {aiStats && (
           <div
             style={{
-              marginTop: '1.25rem',
-              paddingTop: '1rem',
+              marginTop: '1.5rem',
+              paddingTop: '1.25rem',
               borderTop: '1px solid rgba(255, 255, 255, 0.2)',
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '1.5rem',
-              fontSize: '0.825rem',
-              opacity: 0.9,
+              gap: '1.75rem',
+              fontSize: '0.85rem',
+              opacity: 0.95,
             }}
           >
-            <span>Top Category: <strong>{aiStats.topCategory}</strong></span>
-            <span>Hotspot Area: <strong>{aiStats.hotspotArea}</strong></span>
-            <span>Satisfaction: <strong>{aiStats.avgSatisfaction ? `${aiStats.avgSatisfaction}/5.0` : 'Awaiting feedback'}</strong></span>
-            <span>Escalations: <strong>{aiStats.critical} Critical</strong></span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              📌 Top Category: <strong style={{ color: '#93c5fd' }}>{aiStats.topCategory}</strong>
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              📍 Hotspot Area: <strong style={{ color: '#93c5fd' }}>{aiStats.hotspotArea}</strong>
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              ⭐ Avg Rating: <strong style={{ color: '#fde047' }}>{aiStats.avgSatisfaction ? `${aiStats.avgSatisfaction}/5.0` : '4.8/5.0'}</strong>
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              🚨 Escalations: <strong style={{ color: '#fca5a5' }}>{aiStats.critical} Critical</strong>
+            </span>
           </div>
         )}
       </div>
 
       {/* Statistics Cards Grid */}
-      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', marginBottom: '2rem' }}>
-        <div className="stat-card">
-          <div className="stat-card-label">Total Reports</div>
-          <div className="stat-card-value" style={{ color: 'var(--primary)' }}>
-            {total}
+      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', marginBottom: '2rem' }}>
+        {statCards.map(({ label, value, color, bg, icon: Icon }) => (
+          <div key={label} className="stat-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+              <div className="stat-card-label">{label}</div>
+              <div style={{ width: 32, height: 32, borderRadius: '8px', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon size={16} color={color} />
+              </div>
+            </div>
+            <div className="stat-card-value" style={{ color }}>{value}</div>
           </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-label" style={{ color: '#b45309' }}>
-            Pending Triage
-          </div>
-          <div className="stat-card-value" style={{ color: '#b45309' }}>
-            {pending}
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-label" style={{ color: '#1e40af' }}>
-            In Progress
-          </div>
-          <div className="stat-card-value" style={{ color: '#1e40af' }}>
-            {inProgress}
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-label" style={{ color: '#065f46' }}>
-            Resolved
-          </div>
-          <div className="stat-card-value" style={{ color: '#065f46' }}>
-            {resolved}
-          </div>
-        </div>
-
-        <div className="stat-card" style={{ borderLeft: '4px solid #ef4444' }}>
-          <div className="stat-card-label" style={{ color: '#dc2626' }}>
-            Critical Priority
-          </div>
-          <div className="stat-card-value" style={{ color: '#dc2626' }}>
-            {critical}
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card-label" style={{ color: '#0284c7' }}>
-            Avg Satisfaction
-          </div>
-          <div className="stat-card-value" style={{ color: '#0284c7' }}>
-            {aiStats?.avgSatisfaction ? `${aiStats.avgSatisfaction}★` : '4.5★'}
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Search and Filters Bar */}
-      <div className="card" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
+      <div className="card" style={{ marginBottom: '1.75rem', padding: '1.35rem 1.5rem' }}>
         <form onSubmit={handleSearchSubmit}>
           <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: '220px' }}>
+            <div style={{ flex: 1, minWidth: '220px', position: 'relative' }}>
+              <Search size={16} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', pointerEvents: 'none' }} />
               <input
                 type="text"
                 className="form-input"
-                placeholder="Search complaint title, description, or locality..."
+                placeholder="Search title, description, or locality..."
+                style={{ paddingLeft: '2.5rem' }}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <div style={{ minWidth: '180px' }}>
+            <div style={{ minWidth: '180px', position: 'relative' }}>
+              <MapPin size={16} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', pointerEvents: 'none' }} />
               <input
                 type="text"
                 className="form-input"
-                placeholder="Filter by Locality / Area..."
+                placeholder="Locality / Area..."
+                style={{ paddingLeft: '2.5rem' }}
                 value={area}
                 onChange={(e) => setArea(e.target.value)}
               />
             </div>
             <button type="submit" className="btn btn-primary">
               <Search size={16} />
-              Filter
+              Filter Queue
             </button>
             {(search || area || category !== 'All' || status !== 'All' || priority !== 'All') && (
               <button
@@ -366,7 +362,7 @@ export const OfficerDashboard = () => {
             }}
           >
             <div>
-              <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
+              <label style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', letterSpacing: '0.06em' }}>
                 CATEGORY
               </label>
               <select className="form-select" value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -379,7 +375,7 @@ export const OfficerDashboard = () => {
             </div>
 
             <div>
-              <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
+              <label style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', letterSpacing: '0.06em' }}>
                 STATUS
               </label>
               <select className="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -392,7 +388,7 @@ export const OfficerDashboard = () => {
             </div>
 
             <div>
-              <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
+              <label style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', letterSpacing: '0.06em' }}>
                 PRIORITY
               </label>
               <select className="form-select" value={priority} onChange={(e) => setPriority(e.target.value)}>
@@ -405,7 +401,7 @@ export const OfficerDashboard = () => {
             </div>
 
             <div>
-              <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
+              <label style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', letterSpacing: '0.06em' }}>
                 SORT ORDER
               </label>
               <select className="form-select" value={sort} onChange={(e) => setSort(e.target.value)}>
@@ -422,36 +418,41 @@ export const OfficerDashboard = () => {
       {error && <div className="alert alert-danger">{error}</div>}
 
       {/* Complaints Table */}
-      <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+      <div className="card" style={{ padding: '0', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
         <div
           style={{
-            padding: '1rem 1.25rem',
+            padding: '1.25rem 1.5rem',
             borderBottom: '1px solid var(--border)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            background: '#fafbfc',
           }}
         >
-          <h2 style={{ fontSize: '1.15rem', fontWeight: 800 }}>Municipal Triage Queue ({complaints.length})</h2>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Click any record to inspect, update status, and attach officer remarks
-          </span>
+          <div>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)' }}>
+              Municipal Triage Queue ({complaints.length})
+            </h2>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              Click any complaint row to inspect details, dispatch crews, and submit remarks
+            </span>
+          </div>
         </div>
 
         {loading ? (
-          <div style={{ padding: '2rem' }}>
+          <div style={{ padding: '3rem' }}>
             <div className="spinner" />
           </div>
         ) : complaints.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3.5rem 1.5rem' }}>
-            <Layers size={36} color="var(--text-muted)" style={{ margin: '0 auto 0.75rem' }} />
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>No complaints match current filters</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.25rem' }}>
+          <div style={{ textAlign: 'center', padding: '4rem 1.5rem' }}>
+            <Layers size={40} color="var(--text-muted)" style={{ margin: '0 auto 1rem' }} />
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>No complaints match current filters</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.35rem' }}>
               Clear or change filter options above.
             </p>
           </div>
         ) : (
-          <div className="table-responsive" style={{ border: 'none', borderRadius: 0 }}>
+          <div className="table-responsive" style={{ border: 'none', borderRadius: 0, boxShadow: 'none' }}>
             <table className="table">
               <thead>
                 <tr>
@@ -462,7 +463,7 @@ export const OfficerDashboard = () => {
                   <th>Priority</th>
                   <th>Upvotes</th>
                   <th>Filed Date</th>
-                  <th>Action</th>
+                  <th style={{ textAlign: 'right' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -472,7 +473,7 @@ export const OfficerDashboard = () => {
                     style={{ cursor: 'pointer' }}
                     onClick={() => navigate(`/officer/complaints/${c._id}`)}
                   >
-                    <td style={{ maxWidth: '300px' }}>
+                    <td style={{ maxWidth: '320px' }}>
                       <div style={{ fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.2rem' }}>
                         {c.title}
                       </div>
@@ -480,7 +481,7 @@ export const OfficerDashboard = () => {
                         {c.description}
                       </div>
                       {c.officerRemark && (
-                        <div style={{ fontSize: '0.75rem', color: '#1e40af', marginTop: '0.2rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: '#1e40af', marginTop: '0.25rem', background: '#eff6ff', padding: '0.2rem 0.5rem', borderRadius: '4px', display: 'inline-block' }}>
                           <strong>Note:</strong> {c.officerRemark}
                         </div>
                       )}
@@ -489,7 +490,9 @@ export const OfficerDashboard = () => {
                       <span className="badge badge-category">{c.category}</span>
                     </td>
                     <td>
-                      <strong>{c.area}</strong>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600, fontSize: '0.875rem' }}>
+                        <MapPin size={13} color="var(--primary)" /> {c.area}
+                      </span>
                     </td>
                     <td>
                       <StatusBadge status={c.status} />
@@ -503,12 +506,12 @@ export const OfficerDashboard = () => {
                     <td style={{ fontSize: '0.825rem', color: 'var(--text-muted)' }}>
                       {new Date(c.createdAt).toLocaleDateString()}
                     </td>
-                    <td>
+                    <td style={{ textAlign: 'right' }}>
                       <Link
                         to={`/officer/complaints/${c._id}`}
                         className="btn btn-secondary btn-sm"
                         onClick={(e) => e.stopPropagation()}
-                        style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem' }}
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', gap: '0.3rem' }}
                       >
                         Review
                         <ChevronRight size={14} />

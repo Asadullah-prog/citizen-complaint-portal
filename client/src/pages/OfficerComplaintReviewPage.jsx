@@ -1,22 +1,13 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import StatusBadge from '../components/StatusBadge';
 import PriorityBadge from '../components/PriorityBadge';
 import StarRating from '../components/StarRating';
 import {
-  ArrowLeft,
-  ShieldCheck,
-  Save,
-  CheckCircle,
-  AlertCircle,
-  MapPin,
-  Calendar,
-  User,
-  ThumbsUp,
-  TrendingUp,
-  MessageSquareQuote,
-  Clock,
+  ArrowLeft, ShieldCheck, Save, CheckCircle, AlertCircle,
+  MapPin, Calendar, User, ThumbsUp, TrendingUp, MessageSquareQuote,
+  Clock, Shield, Tag, FileText,
 } from 'lucide-react';
 
 export const OfficerComplaintReviewPage = () => {
@@ -96,15 +87,17 @@ export const OfficerComplaintReviewPage = () => {
   }
 
   return (
-    <div className="main-content" style={{ maxWidth: '950px' }}>
+    <div className="main-content" style={{ maxWidth: '980px' }}>
       {/* Navigation Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
         <Link to="/officer/dashboard" className="btn btn-secondary btn-sm" style={{ gap: '0.35rem' }}>
           <ArrowLeft size={16} /> Back to Operations Dashboard
         </Link>
 
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Ticket ID: {complaint?._id}</span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'monospace', background: '#f1f5f9', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+            ID: {complaint?._id}
+          </span>
         </div>
       </div>
 
@@ -122,18 +115,18 @@ export const OfficerComplaintReviewPage = () => {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.75rem' }}>
         {/* Left: Complaint Full Information */}
-        <div className="card" style={{ padding: '1.75rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+        <div className="card" style={{ padding: '2rem', borderRadius: 'var(--radius-2xl)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <span className="badge badge-category">{complaint.category}</span>
-            <div style={{ display: 'flex', gap: '0.35rem' }}>
+            <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
               <StatusBadge status={complaint.status} />
               <PriorityBadge priority={complaint.priority} score={complaint.priorityScore} />
             </div>
           </div>
 
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.75rem' }}>
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.85rem', lineHeight: 1.3 }}>
             {complaint.title}
           </h1>
 
@@ -141,24 +134,26 @@ export const OfficerComplaintReviewPage = () => {
             style={{
               backgroundColor: 'var(--bg-main)',
               borderRadius: 'var(--radius-md)',
-              padding: '0.75rem 1rem',
+              padding: '0.85rem 1rem',
               marginBottom: '1.25rem',
               fontSize: '0.85rem',
               color: 'var(--text-muted)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
             }}
           >
-            <span>Priority Score: <strong>{complaint.priorityScore}</strong></span>
-            <span>Upvotes: <strong>{complaint.upvotes || 0}</strong></span>
-            <span>Days Elapsed: <strong>{complaint.daysSinceCreated ?? 0}d</strong></span>
+            <span>Priority Score: <strong style={{ color: 'var(--text-main)' }}>{complaint.priorityScore}</strong></span>
+            <span>Upvotes: <strong style={{ color: 'var(--text-main)' }}>{complaint.upvotes || 0}</strong></span>
+            <span>Days Elapsed: <strong style={{ color: 'var(--text-main)' }}>{complaint.daysSinceCreated ?? 0}d</strong></span>
           </div>
 
-          <h3 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+          <h3 style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.06em', marginBottom: '0.4rem' }}>
             Citizen Description
           </h3>
-          <p style={{ fontSize: '0.95rem', color: 'var(--text-main)', lineHeight: 1.6, marginBottom: '1.5rem', whiteSpace: 'pre-line' }}>
+          <p style={{ fontSize: '0.95rem', color: 'var(--text-main)', lineHeight: 1.65, marginBottom: '1.5rem', whiteSpace: 'pre-line' }}>
             {complaint.description}
           </p>
 
@@ -168,7 +163,7 @@ export const OfficerComplaintReviewPage = () => {
               paddingTop: '1rem',
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.6rem',
+              gap: '0.65rem',
               fontSize: '0.875rem',
             }}
           >
@@ -194,8 +189,8 @@ export const OfficerComplaintReviewPage = () => {
                 borderTop: '1px solid var(--border)',
                 paddingTop: '1rem',
                 backgroundColor: '#f0fdf4',
-                padding: '1rem',
-                borderRadius: 'var(--radius-md)',
+                padding: '1rem 1.25rem',
+                borderRadius: 'var(--radius-lg)',
               }}
             >
               <div style={{ fontWeight: 700, color: '#166534', fontSize: '0.9rem', marginBottom: '0.35rem' }}>
@@ -217,9 +212,11 @@ export const OfficerComplaintReviewPage = () => {
         </div>
 
         {/* Right: Officer Action Box */}
-        <div className="card" style={{ padding: '1.75rem', height: 'fit-content' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
-            <ShieldCheck size={22} color="var(--primary)" />
+        <div className="card" style={{ padding: '2rem', borderRadius: 'var(--radius-2xl)', height: 'fit-content' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.5rem' }}>
+            <div style={{ width: 36, height: 36, borderRadius: '8px', background: 'var(--primary-50)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ShieldCheck size={20} color="var(--primary)" />
+            </div>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Officer Action Panel</h2>
           </div>
 
@@ -253,7 +250,7 @@ export const OfficerComplaintReviewPage = () => {
             </div>
 
             {status === 'Resolved' && (
-              <div className="alert alert-info" style={{ fontSize: '0.85rem', padding: '0.75rem' }}>
+              <div className="alert alert-info" style={{ fontSize: '0.85rem', padding: '0.85rem' }}>
                 <CheckCircle size={16} />
                 <span>
                   Marking this issue as <strong>Resolved</strong> will prompt the reporting citizen to rate the resolution service.
@@ -263,7 +260,7 @@ export const OfficerComplaintReviewPage = () => {
 
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary btn-lg"
               style={{ width: '100%', marginTop: '0.5rem' }}
               disabled={saving}
             >
