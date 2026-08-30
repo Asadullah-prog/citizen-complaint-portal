@@ -5,7 +5,7 @@
   "main": "server/src/server.js",
   "scripts": {
     "start": "node server/src/server.js",
-    "build": "npm --prefix server install",
+    "build": "npm install && npm --prefix server install",
     "postinstall": "npm --prefix server install",
     "seed": "npm --prefix server run seed"
   },
