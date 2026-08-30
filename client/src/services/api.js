@@ -98,20 +98,7 @@ export const api = {
       body: JSON.stringify({ rating, feedbackComment }),
     }),
 
-  // CSV Export URL (for direct download or fetch)
-  getExportUrl: (params = {}) => {
-    const searchParams = new URLSearchParams();
-    Object.entries(params).forEach(([key, val]) => {
-      if (val !== undefined && val !== null && val !== '') {
-        searchParams.append(key, val);
-      }
-    });
-    const token = localStorage.getItem('token');
-    if (token) searchParams.append('token', token);
-    const queryString = searchParams.toString();
-    return `${API_BASE}/complaints/export${queryString ? `?${queryString}` : ''}`;
-  },
-
+  // CSV Export via secure authenticated Blob request
   exportCSVBlob: async (params = {}) => {
     const token = localStorage.getItem('token');
     const searchParams = new URLSearchParams();

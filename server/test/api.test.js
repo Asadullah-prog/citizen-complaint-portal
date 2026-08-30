@@ -223,8 +223,8 @@ async function runTests() {
     }
   });
 
-  // 15. Officer CSV Export endpoint
-  await test('15. Officer CSV Export GET /api/complaints/export', async () => {
+  // 15. Officer CSV Export endpoint via Bearer Header
+  await test('15. Officer CSV Export via Authorization Header GET /api/complaints/export', async () => {
     const res = await fetchJSON('/complaints/export', {
       headers: { Authorization: `Bearer ${officerToken}` },
     });
@@ -233,6 +233,42 @@ async function runTests() {
     }
     if (!res.body.includes('Title') || !res.body.includes('Water pipe rupture')) {
       throw new Error(`CSV body missing expected headers or records`);
+    }
+  });
+
+  // 16. CSV Security: Citizen Blocked from CSV Export (403 Forbidden)
+  await test('16. CSV Security: Citizen blocked from CSV export (403 Forbidden)', async () => {
+    const res = await fetchJSON('/complaints/export', {
+      headers: { Authorization: `Bearer ${citizenToken}` },
+    });
+    if (res.status !== 403) {
+      throw new Error(`Expected 403 Forbidden for citizen, got ${res.status}`);
+    }
+  });
+
+  // 17. CSV Security: Unauthenticated Blocked from CSV Export (401 Unauthorized)
+  await test('17. CSV Security: Unauthenticated blocked from CSV export (401 Unauthorized)', async () => {
+    const res = await fetchJSON('/complaints/export');
+    if (res.status !== 401) {
+      throw new Error(`Expected 401 Unauthorized for unauthenticated request, got ${res.status}`);
+    }
+  });
+
+  // 18. CSV Security: Query Token in URL Rejected (401 Unauthorized)
+  await test('18. CSV Security: Query token in URL rejected (401 Unauthorized)', async () => {
+    const res = await fetchJSON(`/complaints/export?token=${officerToken}`);
+    if (res.status !== 401) {
+      throw new Error(`Expected 401 Unauthorized when token passed in query parameter, got ${res.status}`);
+    }
+  });
+
+  // 19. CSV Export with Filter Preservation
+  await test('19. CSV Export with Filter Preservation (category=Water)', async () => {
+    const res = await fetchJSON('/complaints/export?category=Water', {
+      headers: { Authorization: `Bearer ${officerToken}` },
+    });
+    if (res.status !== 200 || !res.body.includes('Water pipe rupture')) {
+      throw new Error(`Filtered CSV export failed: ${res.status}`);
     }
   });
 
