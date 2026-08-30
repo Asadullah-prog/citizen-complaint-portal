@@ -112,11 +112,12 @@ const startServer = async () => {
       await seedData();
     }
 
-    app.listen(PORT, () => {
+    const host = '0.0.0.0';
+    app.listen(PORT, host, () => {
       console.log(`====================================================`);
       console.log(`  Citizen Complaint Portal Backend Running!`);
-      console.log(`  Port: http://localhost:${PORT}`);
-      console.log(`  Health Check: http://localhost:${PORT}/api/health`);
+      console.log(`  Port: http://${host}:${PORT}`);
+      console.log(`  Health Check: http://${host}:${PORT}/api/health`);
       console.log(`====================================================`);
     });
   } catch (error) {
