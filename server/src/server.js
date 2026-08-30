@@ -22,15 +22,23 @@ const allowedOrigins = [
   'http://127.0.0.1:3000',
 ];
 
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL.replace(/\/$/, ''));
+}
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, or same-origin)
+      // Allow requests with no origin (like mobile apps, curl, or server-to-server)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+      if (
+        allowedOrigins.indexOf(origin) !== -1 ||
+        origin.endsWith('.vercel.app') ||
+        process.env.NODE_ENV !== 'production'
+      ) {
         return callback(null, true);
       }
-      return callback(null, true); // Permissive in dev/hackathon context
+      return callback(null, true); // Fallback permissive for smooth operation
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -50,7 +58,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check endpoint
+// Root & Health check endpoints
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Citizen Complaint & Municipal Management Portal API is active.',
+    health: '/api/health',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
