@@ -4,14 +4,9 @@
   "description": "Full-Stack MERN Civic Complaint & Municipal Management Portal",
   "main": "server/src/server.js",
   "scripts": {
-    "postinstall": "npm --prefix server install",
     "start": "node server/src/server.js",
-    "server": "npm --prefix server start",
-    "server:dev": "npm --prefix server run dev",
-    "server:seed": "npm --prefix server run seed",
-    "client": "npm --prefix client run dev",
-    "client:build": "npm --prefix client run build",
     "build": "npm --prefix server install",
+    "postinstall": "npm --prefix server install",
     "seed": "npm --prefix server run seed"
   },
   "dependencies": {
